@@ -7,8 +7,6 @@ import uuid
 app = Flask(__name__)
 app.secret_key = "dev-secret-key-v2"
 UPLOAD_FOLDER = "app/data"
-
-@app.route("/", methods=["GET", "POST"])
 def load_csv(path):
     try:
         return pd.read_csv(path, encoding="utf-8", sep=None, engine="python")
@@ -31,6 +29,8 @@ def process_dates(df, column_types):
             df[f"{col}_month"] = df[col].dt.month
             df[f"{col}_day"] = df[col].dt.day
     return df
+@app.route("/", methods=["GET", "POST"])
+
         
 def upload():
     if request.method == "POST":
