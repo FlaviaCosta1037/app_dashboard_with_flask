@@ -1,0 +1,36 @@
+body {
+    min-height: 100vh;
+    display: flex;
+}
+
+.sidebar {
+    width: 230px;
+    background-color: #1f2937;
+    color: #fff;
+    padding: 20px;
+}
+
+.sidebar h4 {
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+.sidebar a {
+    color: #d1d5db;
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+.sidebar a:hover {
+    background-color: #374151;
+    color: #fff;
+}
+
+.content {
+    flex: 1;
+    padding: 30px;
+    background-color: #f9fafb;
+}
