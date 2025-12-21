@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3>Defina o tipo de cada coluna</h3>
+
+<form method="post">
+    {% for col in columns %}
+    <div class="mb-2">
+        <label class="fw-bold">{{ col }}</label>
+        <select name="{{ col }}" class="form-select">
+            <option value="">-- selecione --</option>
+            <option value="category">Categoria</option>
+            <option value="number">Número</option>
+            <option value="date">Data</option>
+          </select>          
+    </div>
+    {% endfor %}
+
+    <button class="btn btn-success mt-3">Confirmar</button>
+</form>
+
+{% endblock %}

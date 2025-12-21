@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3>Configurar Gráfico</h3>
+
+<form method="post" class="row mb-4">
+    <div class="col">
+        <label>Categoria (Eixo X)</label>
+        <select name="x" class="form-select">
+            {% for c in categories %}
+            <option value="{{ c }}">{{ c }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col">
+        <label>Valor Numérico</label>
+        <select name="y" class="form-select">
+            {% for n in numbers %}
+            <option value="{{ n }}">{{ n }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col d-flex align-items-end">
+        <button class="btn btn-success">Gerar Gráfico</button>
+    </div>
+</form>
+
+{% if chart_data != "{}" %}
+<div class="card p-3 shadow-sm">
+    <canvas id="chart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const chartType = "{{ chart_type }}";
+const chartData = {{ chart_data | safe }};
+
+if (chartData.labels && chartData.values) {
+    new Chart(document.getElementById("chart"), {
+        type: chartType,
+        data: {
+            labels: chartData.labels,
+            datasets: [{
+                label: "Valor",
+                data: chartData.values,
+                backgroundColor: [
+                    '#4e79a7','#f28e2b','#e15759','#76b7b2','#59a14f'
+                ]
+            }]
+        },
+        options: {
+            responsive: true
+        }
+    });
+}
+</script>
+{% endif %}
+
+{% endblock %}

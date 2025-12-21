@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3>Escolha o tipo de gráfico</h3>
+
+<form method="post">
+    <select name="chart" class="form-select mb-3">
+        <option value="bar">Barras</option>
+        <option value="pie">Pizza</option>
+        <option value="doughnut">Donut</option>
+        <option value="stacked">Barras Empilhadas</option>
+    </select>
+
+    <button class="btn btn-primary">Avançar</button>
+</form>
+
+{% endblock %}
