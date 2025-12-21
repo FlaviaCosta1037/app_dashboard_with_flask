@@ -1,22 +1,24 @@
 {% extends "base.html" %}
+
+{% block title %}Definir Colunas{% endblock %}
+
 {% block content %}
+<h2>Definição de tipos de coluna</h2>
 
-<h3>Defina o tipo de cada coluna</h3>
-
-<form method="post">
+<form method="POST">
     {% for col in columns %}
-    <div class="mb-2">
-        <label class="fw-bold">{{ col }}</label>
-        <select name="{{ col }}" class="form-select">
-            <option value="">-- selecione --</option>
-            <option value="category">Categoria</option>
-            <option value="number">Número</option>
-            <option value="date">Data</option>
-          </select>          
-    </div>
+        <div class="mb-3">
+            <label class="form-label">{{ col }}</label>
+            <select name="{{ col }}" class="form-select">
+                <option value="">-- selecione --</option>
+                <option value="category">Categoria</option>
+                <option value="number">Número</option>
+                <option value="date">Data</option>
+            </select>
+        </div>
     {% endfor %}
 
-    <button class="btn btn-success mt-3">Confirmar</button>
+    <button class="btn btn-success">Continuar</button>
 </form>
-
 {% endblock %}
+
