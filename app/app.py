@@ -10,7 +10,6 @@ UPLOAD_FOLDER = "app/data"
 def load_table(path):
     ext = os.path.splitext(path)[1].lower()
 
-    # CSV
     if ext == ".csv":
         try:
             return pd.read_csv(path, encoding="utf-8", sep=None, engine="python")
@@ -25,7 +24,6 @@ def load_table(path):
                 on_bad_lines="skip"
             )
 
-    # Excel
     elif ext in [".xlsx", ".xls"]:
         return pd.read_excel(path)
 
@@ -42,30 +40,17 @@ def process_dates(df, column_types):
             df[f"{col}_day"] = df[col].dt.day
     return df
 @app.route("/", methods=["GET", "POST"])
+def new_project():
+    return render_template("new_project.html")
 
         
+@app.route("/upload", methods=["GET", "POST"])
 def upload():
     if request.method == "POST":
-        file = request.files.get("file")
-
-        if not file or file.filename == "":
-            return "Nenhum arquivo enviado", 400
-
-        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-        file_id = str(uuid.uuid4())
-        filename = f"{file_id}_{file.filename}"
-        path = os.path.join(UPLOAD_FOLDER, filename)
-        file.save(path)
-
-        try:
-            df = load_table(path)
-        except ValueError as e:
-            return str(e), 400
-
+        # leitura do arquivo
+        session.clear()  # garante projeto limpo
         session["file_path"] = path
         session["columns"] = list(df.columns)
-
         return redirect(url_for("define_columns"))
 
     return render_template("upload.html")
@@ -73,18 +58,14 @@ def upload():
 
 @app.route("/columns", methods=["GET", "POST"])
 def define_columns():
-    columns = session.get("columns")
+    columns = session["columns"]
 
     if request.method == "POST":
-        column_types = {}
-        for col in columns:
-            column_types[col] = request.form.get(col)
-
+        column_types = {c: request.form.get(c) for c in columns}
         session["column_types"] = column_types
-        return redirect(url_for("choose_chart"))
+        return redirect(url_for("new_visual"))
 
     return render_template("columns.html", columns=columns)
-
 
 @app.route("/charts", methods=["GET", "POST"])
 def choose_chart():
@@ -104,7 +85,7 @@ def visualize():
     if not path or not column_types or not chart_type:
         return redirect(url_for("upload"))
 
-    df = load_csv(path)
+    df = load_table(path)
     df = process_dates(df, column_types)
 
     categories = []
@@ -149,6 +130,39 @@ def visualize():
         categories=categories,
         numbers=numbers
     )
+
+@app.route("/visual/new", methods=["GET", "POST"])
+def new_visual():
+    column_types = session["column_types"]
+
+    categories = [c for c, t in column_types.items() if t == "category"]
+    numbers = [c for c, t in column_types.items() if t == "number"]
+    dates = [c for c, t in column_types.items() if t == "date"]
+
+    if request.method == "POST":
+        # monta datasets
+        charts = session.get("charts", [])
+        charts.append(chart_config)
+        session["charts"] = charts
+        return redirect(url_for("dashboard"))
+
+    return render_template(
+        "visual_new.html",
+        categories=categories,
+        numbers=numbers,
+        dates=dates
+    )
+
+@app.route("/dashboard")
+def dashboard():
+    charts = session.get("charts", [])
+    return render_template("dashboard.html", charts=charts)
+
+@app.route("/cancel")
+def cancel_project():
+    session.clear()
+    return redirect(url_for("new_project"))
+
 
 
 if __name__ == "__main__":

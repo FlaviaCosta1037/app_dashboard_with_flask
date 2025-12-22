@@ -18,7 +18,9 @@
         </div>
     {% endfor %}
 
-    <button class="btn btn-success">Continuar</button>
+    <a href="{{ url_for('upload') }}">🔙 Voltar</a>
+    <a href="{{ url_for('new_project') }}">❌ Cancelar</a>
+
 </form>
 {% endblock %}
 

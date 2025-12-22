@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Novo Visual{% endblock %}
+
+{% block content %}
+<h2>Criar novo gráfico</h2>
+
+<form method="post" class="form-card">
+
+  <label>Tipo de gráfico</label>
+  <select name="chart_type">
+    <option value="bar">Barras</option>
+    <option value="line">Linha</option>
+    <option value="pie">Pizza</option>
+    <option value="doughnut">Donut</option>
+  </select>
+
+  <label>Eixo X</label>
+  <select name="x" required>
+    {% for c in categories %}
+      <option value="{{ c }}">{{ c }}</option>
+    {% endfor %}
+  </select>
+
+  <label>Valor (Y)</label>
+  <select name="y" required>
+    {% for n in numbers %}
+      <option value="{{ n }}">{{ n }}</option>
+    {% endfor %}
+  </select>
+
+  <label>Legenda (pode selecionar mais de uma)</label>
+  <select name="legends" multiple size="4">
+    {% for c in categories %}
+      <option value="{{ c }}">{{ c }}</option>
+    {% endfor %}
+  </select>
+
+  <a href="{{ url_for('define_columns') }}">🔙 Voltar</a>
+  <a href="{{ url_for('new_project') }}">❌ Cancelar</a>
+
+</form>
+{% endblock %}
