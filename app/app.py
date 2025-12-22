@@ -7,19 +7,31 @@ import uuid
 app = Flask(__name__)
 app.secret_key = "dev-secret-key-v2"
 UPLOAD_FOLDER = "app/data"
-def load_csv(path):
-    try:
-        return pd.read_csv(path, encoding="utf-8", sep=None, engine="python")
-    except UnicodeDecodeError:
-        return pd.read_csv(path, encoding="latin1", sep=None, engine="python")
-    except Exception:
-        return pd.read_csv(
-            path,
-            encoding="latin1",
-            sep=";",
-            engine="python",
-            on_bad_lines="skip"
-        )
+def load_table(path):
+    ext = os.path.splitext(path)[1].lower()
+
+    # CSV
+    if ext == ".csv":
+        try:
+            return pd.read_csv(path, encoding="utf-8", sep=None, engine="python")
+        except UnicodeDecodeError:
+            return pd.read_csv(path, encoding="latin1", sep=None, engine="python")
+        except Exception:
+            return pd.read_csv(
+                path,
+                encoding="latin1",
+                sep=";",
+                engine="python",
+                on_bad_lines="skip"
+            )
+
+    # Excel
+    elif ext in [".xlsx", ".xls"]:
+        return pd.read_excel(path)
+
+    else:
+        raise ValueError(f"Formato de arquivo não suportado: {ext}")
+
 def process_dates(df, column_types):
 
     for col, col_type in column_types.items():
@@ -41,25 +53,15 @@ def upload():
 
         os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-        # gera nome único para evitar conflito
         file_id = str(uuid.uuid4())
         filename = f"{file_id}_{file.filename}"
         path = os.path.join(UPLOAD_FOLDER, filename)
         file.save(path)
 
-        # tenta ler o CSV de forma robusta
         try:
-            df = pd.read_csv(path, encoding="utf-8", sep=None, engine="python")
-        except UnicodeDecodeError:
-            df = pd.read_csv(path, encoding="latin1", sep=None, engine="python")
-        except Exception:
-            df = pd.read_csv(
-                path,
-                encoding="latin1",
-                sep=";",
-                engine="python",
-                engine_kwargs={"on_bad_lines": "skip"}
-            )
+            df = load_table(path)
+        except ValueError as e:
+            return str(e), 400
 
         session["file_path"] = path
         session["columns"] = list(df.columns)

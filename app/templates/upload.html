@@ -6,7 +6,7 @@
 <h2>Upload do arquivo CSV</h2>
 
 <form method="POST" enctype="multipart/form-data">
-    <input type="file" name="file" class="form-control mb-3" required>
+    <input type="file" name="file" accept=".csv,.xlsx,.xls" class="form-control mb-3" required>
     <button class="btn btn-primary">Enviar</button>
 </form>
 {% endblock %}
