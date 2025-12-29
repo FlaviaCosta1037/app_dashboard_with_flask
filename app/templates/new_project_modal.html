@@ -1,0 +1,19 @@
+<div id="projectModal" class="modal">
+    <div class="modal-content">
+      <h3>Novo Projeto</h3>
+  
+      <form method="POST" action="{{ url_for('create_project') }}">
+        <label>Título</label>
+        <input type="text" name="title" required>
+  
+        <label>Descrição</label>
+        <textarea name="description"></textarea>
+  
+        <div class="modal-actions">
+          <button type="submit">Criar</button>
+          <button type="button" onclick="closeModal()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  

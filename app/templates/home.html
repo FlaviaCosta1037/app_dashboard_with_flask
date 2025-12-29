@@ -1,33 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    {% block head %}
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>{% block title %}My Flask App{% endblock %}</title>
-    {{ bootstrap.load_css() }}
-    <!-- Bootstrap-Flask automatically loads CSS here -->
-    {% endblock %}
-</head>
-<body>
-    <nav class="navbar navbar-light bg-light">
-        <a class="navbar-brand" href="#">
-            <img
-            src="{{ url_for('static', filename='assets/analise-de-dados.png') }}"
-            width="30"
-            height="30"
-            alt="Logo"> 
-        </a>
-    </nav>
+{% extends "base.html" %}
 
-    <div class="container">
-        {% block content %}
-        <!-- Child page content will go here -->
-        <div class="d-inline-flex p-2">I'm an inline flexbox container!</div>
-        {% endblock %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+  <h2>Bem-vindo 👋</h2>
+
+  <p>
+    Crie um novo projeto no menu lateral ou selecione um dashboard existente.
+  </p>
+
+  {% if projects %}
+    <div class="row mt-4">
+      {% for p in projects %}
+        <div class="col-md-4 mb-3">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">{{ p.title }}</h5>
+              <p class="card-text text-muted">{{ p.description }}</p>
+
+              <a href="/dashboard/{{ p.id }}" class="btn btn-outline-primary btn-sm">
+                Abrir dashboard
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
     </div>
-    <h2>teste</h2>
-    <!-- Bootstrap-Flask automatically loads JS here -->
-    {{ bootstrap.load_js() }}
-</body>
-</html>
+  {% else %}
+    <p class="text-muted mt-4">Nenhum projeto criado ainda.</p>
+  {% endif %}
+{% endblock %}

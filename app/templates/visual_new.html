@@ -5,8 +5,7 @@
 {% block content %}
 <h2>Criar novo gráfico</h2>
 
-<form method="post" class="form-card">
-
+<form method="post" class="form-card" action="{{ url_for('new_visual') }}">
   <label>Tipo de gráfico</label>
   <select name="chart_type">
     <option value="bar">Barras</option>
@@ -40,7 +39,7 @@
   </button>
 
   <a href="{{ url_for('define_columns') }}">🔙 Voltar</a>
-  <a href="{{ url_for('new_project') }}">❌ Cancelar</a>
+  <a href="{{ url_for('cancel_project') }}">❌ Cancelar</a>
 
 </form>
 {% endblock %}

@@ -1,20 +1,75 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <title>{% block title %}Data Visual App{% endblock %}</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <title>{% block title %}Dashboard{% endblock %}</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {% block head %}{% endblock %}
 </head>
+<!-- MODAL NOVO PROJETO -->
+<div id="projectModal" class="modal-overlay">
+  <div class="modal">
+    <h3>Novo Projeto</h3>
 
+    <form method="POST" action="{{ url_for('create_project') }}">
+      <label>Título do projeto</label>
+      <input type="text" name="title" required>
+
+      <label>Descrição</label>
+      <textarea name="description"></textarea>
+
+      <div class="modal-actions">
+        <button type="submit">Criar</button>
+        <button type="button" onclick="closeProjectModal()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
 <body>
-  <div class="sidebar">
-    <a href="{{ url_for('new_project') }}">🏠 Novo Projeto</a>
-    <a href="{{ url_for('dashboard') }}">📊 Dashboard</a>
-  </div>
 
-  <div class="content">
-    {% block content %}{% endblock %}
-  </div>
+<div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <h3 class="logo">📊 DataApp</h3>
+
+        <nav>
+            <a href="{{ url_for('home') }}">🏠 Home</a>
+            <a href="#" onclick="openProjectModal()">➕ Novo Projeto</a>
+
+            <hr>
+
+            <span class="menu-title">Dashboards</span>
+            {% if projects %}
+              {% for p in projects %}
+                <a href="/dashboard/{{ p.id }}">📁 {{ p.title }}</a>
+              {% endfor %}
+            {% endif %}
+        </nav>
+    </aside>
+
+    <!-- CONTEÚDO -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+</div>
+
+{% block scripts %}{% endblock %}
+
 </body>
+<script>
+  function openProjectModal() {
+    document.getElementById("projectModal").style.display = "flex";
+  }
+  
+  function closeProjectModal() {
+    document.getElementById("projectModal").style.display = "none";
+  }
+  </script>
+  
 </html>

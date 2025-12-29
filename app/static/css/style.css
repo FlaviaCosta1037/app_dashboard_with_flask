@@ -1,36 +1,94 @@
-body {
-    min-height: 100vh;
+* {
+    box-sizing: border-box;
+  }
+  
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  
+  /* 🔹 Layout principal */
+  .app-layout {
     display: flex;
-}
-
-.sidebar {
-    width: 230px;
-    background-color: #1f2937;
+    min-height: 100vh;
+  }
+  
+  /* 🔹 Sidebar */
+  .sidebar {
+    width: 240px;
+    background: #1f2937;
     color: #fff;
     padding: 20px;
-}
-
-.sidebar h4 {
-    margin-bottom: 30px;
-    font-weight: 600;
-}
-
-.sidebar a {
-    color: #d1d5db;
-    text-decoration: none;
+    flex-shrink: 0;
+  }
+  
+  .sidebar .logo {
+    margin-bottom: 20px;
+  }
+  
+  .sidebar nav a {
     display: block;
+    color: #e5e7eb;
+    text-decoration: none;
     padding: 10px;
     border-radius: 6px;
-    margin-bottom: 8px;
-}
-
-.sidebar a:hover {
-    background-color: #374151;
-    color: #fff;
-}
-
-.content {
+    margin-bottom: 5px;
+  }
+  
+  .sidebar nav a:hover {
+    background: #374151;
+  }
+  
+  .menu-title {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #9ca3af;
+    margin-top: 20px;
+    display: block;
+  }
+  
+  /* 🔹 Conteúdo */
+  .main-content {
     flex: 1;
-    padding: 30px;
-    background-color: #f9fafb;
-}
+    padding: 24px;
+    background: #f9fafb;
+    overflow-y: auto;
+  }
+
+  /* 🔹 Modal */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal {
+    background: white;
+    padding: 20px;
+    width: 400px;
+    border-radius: 8px;
+  }
+  
+  .modal label {
+    display: block;
+    margin-top: 10px;
+  }
+  
+  .modal input,
+  .modal textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 4px;
+  }
+  
+  .modal-actions {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  

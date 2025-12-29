@@ -1,31 +1,45 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>📊 Dashboard do Projeto</h2>
 
-<a href="{{ url_for('new_visual') }}" class="btn">
-  ➕ Novo Gráfico
-</a>
+<h2>{{ project.title }}</h2>
 
-<div class="dashboard">
-  {% for chart in charts %}
-    <div class="card">
-      <canvas id="chart-{{ loop.index }}"></canvas>
+<a href="{{ url_for('new_visual') }}">➕ Novo gráfico</a>
+
+<hr>
+
+{% if project.charts|length == 0 %}
+  <p>Nenhum gráfico criado ainda.</p>
+{% endif %}
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 20px;">
+  {% for chart in project.charts %}
+    <div>
+      <canvas id="chart-{{ chart.id }}"></canvas>
     </div>
   {% endfor %}
 </div>
 
 <script>
-const charts = {{ charts | tojson }};
-charts.forEach((chart, index) => {
-  new Chart(document.getElementById(`chart-${index + 1}`), {
-    type: chart.type,
-    data: {
-      labels: chart.labels,
-      datasets: chart.datasets
-    },
-    options: { responsive: true }
+{% for chart in project.charts %}
+fetch("/chart/data/{{ chart.id }}")
+  .then(res => res.json())
+  .then(data => {
+    new Chart(
+      document.getElementById("chart-{{ chart.id }}"),
+      {
+        type: data.type,
+        data: {
+          labels: data.labels,
+          datasets: [{
+            label: data.y,
+            data: data.values
+          }]
+        }
+      }
+    );
   });
-});
+{% endfor %}
 </script>
+
 {% endblock %}

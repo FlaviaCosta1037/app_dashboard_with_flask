@@ -5,7 +5,7 @@
 {% block content %}
 <h2>Definição de tipos de coluna</h2>
 
-<form method="POST">
+<form method="post" action="{{ url_for('define_columns') }}">
     {% for col in columns %}
         <div class="mb-3">
             <label class="form-label">{{ col }}</label>
@@ -21,7 +21,8 @@
         Criar Gráfico
     </button>
     <a href="{{ url_for('upload') }}">🔙 Voltar</a>
-    <a href="{{ url_for('new_project') }}">❌ Cancelar</a>
+    <a href="{{ url_for('cancel_project') }}">❌ Cancelar</a>
+
 
 </form>
 {% endblock %}
