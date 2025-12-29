@@ -12,14 +12,42 @@
   <p>Nenhum gráfico criado ainda.</p>
 {% endif %}
 
-<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 20px;">
+<div class="charts-grid">
   {% for chart in project.charts %}
-    <div>
+    <div class="chart-card">
+
+      <!-- botão delete -->
+      <button
+        class="delete-btn"
+        data-chart-id="{{ chart.id }}"
+        onclick="openDeleteModal(this)"
+      >
+        🗑️
+      </button>
+
       <canvas id="chart-{{ chart.id }}"></canvas>
+
     </div>
   {% endfor %}
 </div>
 
+<!-- MODAL DE CONFIRMAÇÃO (ÚNICO) -->
+<div class="modal-backdrop" id="deleteModal">
+  <div class="modal-box">
+    <h3>Excluir gráfico</h3>
+    <p>Tem certeza que deseja excluir este gráfico?</p>
+
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeDeleteModal()">Cancelar</button>
+
+      <form id="deleteForm" method="POST">
+        <button type="submit" class="btn-danger">Excluir</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- SCRIPT DOS GRÁFICOS -->
 <script>
 {% for chart in project.charts %}
 fetch("/chart/data/{{ chart.id }}")
@@ -35,11 +63,27 @@ fetch("/chart/data/{{ chart.id }}")
             label: data.y,
             data: data.values
           }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true
         }
       }
     );
   });
 {% endfor %}
+
+/* ===== MODAL DELETE ===== */
+function openDeleteModal(button) {
+  const chartId = button.dataset.chartId;
+  const form = document.getElementById("deleteForm");
+  form.action = `/visual/delete/${chartId}`;
+  document.getElementById("deleteModal").classList.add("active");
+}
+
+function closeDeleteModal() {
+  document.getElementById("deleteModal").classList.remove("active");
+}
 </script>
 
 {% endblock %}

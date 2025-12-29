@@ -295,5 +295,33 @@ def cancel_project():
 
 # =====================================================
 
+@app.route("/visual/delete/<chart_id>/confirm")
+def confirm_delete_visual(chart_id):
+    project_id = session.get("project_id")
+    project = load_project(project_id)
+
+    chart = next((c for c in project["charts"] if c["id"] == chart_id), None)
+    if not chart:
+        return redirect(url_for("dashboard", project_id=project_id))
+
+    return render_template(
+        "confirm_delete.html",
+        chart=chart,
+        project=project
+    )
+
+@app.route("/visual/delete/<chart_id>", methods=["POST"])
+def delete_visual(chart_id):
+    project_id = session.get("project_id")
+    project = load_project(project_id)
+
+    project["charts"] = [
+        c for c in project["charts"] if c["id"] != chart_id
+    ]
+
+    save_project(project)
+    return redirect(url_for("dashboard", project_id=project_id))
+
+
 if __name__ == "__main__":
     app.run(debug=True)

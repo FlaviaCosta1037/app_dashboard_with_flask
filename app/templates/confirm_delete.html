@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>Excluir gráfico</h3>
+
+<p>Deseja realmente excluir este gráfico?</p>
+
+<form method="POST" action="{{ url_for('delete_visual', chart_id=chart.id) }}">
+  <button type="submit">Sim, excluir</button>
+  <a href="{{ url_for('dashboard', project_id=project.id) }}">Cancelar</a>
+</form>
+{% endblock %}

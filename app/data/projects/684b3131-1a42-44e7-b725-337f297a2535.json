@@ -4,18 +4,6 @@
   "description": "",
   "charts": [
     {
-      "id": "37b3a34c-43ff-45c5-a292-1aab0e057355",
-      "type": "bar",
-      "x": "data_inversa_year",
-      "y": "mortos"
-    },
-    {
-      "id": "061da63d-dd8d-4aab-bfd6-4e346457e582",
-      "type": "bar",
-      "x": "data_inversa_year",
-      "y": "pessoas"
-    },
-    {
       "id": "a76bb7f6-1301-4082-9511-fc92e66aba51",
       "type": "bar",
       "x": "data_inversa_month",
