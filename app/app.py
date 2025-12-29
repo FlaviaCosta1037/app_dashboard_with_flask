@@ -39,21 +39,52 @@ def process_dates(df, column_types):
             df[f"{col}_month"] = df[col].dt.month
             df[f"{col}_day"] = df[col].dt.day
     return df
-@app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["GET"])
 def new_project():
+    session.clear()
     return render_template("new_project.html")
 
         
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
     if request.method == "POST":
-        # leitura do arquivo
-        session.clear()  # garante projeto limpo
+        file = request.files.get("file")
+
+        if not file or file.filename == "":
+            return "Nenhum arquivo enviado", 400
+
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+        file_id = str(uuid.uuid4())
+        filename = f"{file_id}_{file.filename}"
+        path = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(path)
+
+        # 🔹 LEITURA DO ARQUIVO
+        try:
+            if filename.lower().endswith(".csv"):
+                try:
+                    df = pd.read_csv(path, sep=None, engine="python", encoding="utf-8")
+                except UnicodeDecodeError:
+                    df = pd.read_csv(path, sep=None, engine="python", encoding="latin1")
+
+            elif filename.lower().endswith((".xls", ".xlsx")):
+                df = pd.read_excel(path)
+
+            else:
+                return "Formato de arquivo não suportado", 400
+
+        except Exception as e:
+            return f"Erro ao ler arquivo: {e}", 500
+
+        session.clear()  # limpa projeto anterior
         session["file_path"] = path
-        session["columns"] = list(df.columns)
+        session["columns"] = df.columns.tolist()
+
         return redirect(url_for("define_columns"))
 
     return render_template("upload.html")
+
 
 
 @app.route("/columns", methods=["GET", "POST"])
@@ -67,90 +98,66 @@ def define_columns():
 
     return render_template("columns.html", columns=columns)
 
-@app.route("/charts", methods=["GET", "POST"])
-def choose_chart():
-    if request.method == "POST":
-        session["chart_type"] = request.form["chart"]
-        return redirect(url_for("visualize"))
-
-    return render_template("charts.html")
-
-
-@app.route("/visualize", methods=["GET", "POST"])
-def visualize():
-    path = session.get("file_path")
-    column_types = session.get("column_types")
-    chart_type = session.get("chart_type")
-
-    if not path or not column_types or not chart_type:
-        return redirect(url_for("upload"))
-
-    df = load_table(path)
-    df = process_dates(df, column_types)
-
-    categories = []
-    numbers = []
-
-    for col, col_type in column_types.items():
-        if col_type == "category":
-            categories.append(col)
-
-        elif col_type == "number":
-            numbers.append(col)
-
-        elif col_type == "date":
-            categories.extend([
-                f"{col}_year",
-                f"{col}_month",
-                f"{col}_day"
-            ])
-
-
-    chart_data = {}
-
-    if request.method == "POST":
-        x = request.form.get("x")
-        y = request.form.get("y")
-
-        if x and y:
-            grouped = df.groupby(x)[y].sum().reset_index()
-
-            chart_data = {
-                "labels": grouped[x].astype(str).tolist(),
-                "values": grouped[y].astype(int).tolist()
-            }
-
-            if chart_type == "stacked":
-                chart_type = "bar"
-
-    return render_template(
-        "visualize.html",
-        chart_type=chart_type,
-        chart_data=json.dumps(chart_data),
-        categories=categories,
-        numbers=numbers
-    )
-
 @app.route("/visual/new", methods=["GET", "POST"])
 def new_visual():
-    column_types = session["column_types"]
+    file_path = session.get("file_path")
+    column_types = session.get("column_types")
 
-    categories = [c for c, t in column_types.items() if t == "category"]
+    if not file_path or not column_types:
+        return redirect(url_for("upload"))
+
+    df = load_table(file_path)
+
+    categories = [c for c, t in column_types.items() if t in ["category", "date"]]
     numbers = [c for c, t in column_types.items() if t == "number"]
-    dates = [c for c, t in column_types.items() if t == "date"]
 
     if request.method == "POST":
-        # monta datasets
+        chart_type = request.form["chart_type"]
+        x = request.form["x"]
+        y = request.form["y"]
+        legends = request.form.getlist("legends")
+
         charts = session.get("charts", [])
+
+        # 🔥 AQUI o chart_config É CRIADO
+        if legends:
+            datasets = []
+            for value in df[legends[0]].dropna().unique():
+                subset = df[df[legends[0]] == value]
+                grouped = subset.groupby(x)[y].sum().reset_index()
+
+                datasets.append({
+                    "label": str(value),
+                    "data": grouped[y].tolist()
+                })
+
+            chart_config = {
+                "type": chart_type,
+                "labels": grouped[x].astype(str).tolist(),
+                "datasets": datasets
+            }
+
+        else:
+            grouped = df.groupby(x)[y].sum().reset_index()
+            chart_config = {
+                "type": chart_type,
+                "labels": grouped[x].astype(str).tolist(),
+                "datasets": [{
+                    "label": y,
+                    "data": grouped[y].tolist()
+                }]
+            }
+
+        # ✅ AGORA SIM: chart_config EXISTE
         charts.append(chart_config)
         session["charts"] = charts
+
         return redirect(url_for("dashboard"))
 
     return render_template(
         "visual_new.html",
         categories=categories,
-        numbers=numbers,
-        dates=dates
+        numbers=numbers
     )
 
 @app.route("/dashboard")

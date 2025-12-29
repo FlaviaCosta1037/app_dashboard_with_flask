@@ -1,65 +1,31 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Dashboard</title>
+{% extends "base.html" %}
 
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% block content %}
+<h2>📊 Dashboard do Projeto</h2>
 
-    <style>
-        .dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-            gap: 20px;
-            padding: 20px;
-        }
-        canvas {
-            background: #fff;
-            border-radius: 8px;
-            padding: 10px;
-        }
-    </style>
-</head>
-
-<body>
-
-<h2>📊 Meu Dashboard</h2>
+<a href="{{ url_for('new_visual') }}" class="btn">
+  ➕ Novo Gráfico
+</a>
 
 <div class="dashboard">
-    {% for chart in charts %}
-        <div>
-            <canvas id="chart-{{ loop.index }}"></canvas>
-        </div>
-        <a href="{{ url_for('new_visual') }}">➕ Novo Gráfico</a>
-        <a href="{{ url_for('new_project') }}">❌ Cancelar Projeto</a>
-
-    {% endfor %}
+  {% for chart in charts %}
+    <div class="card">
+      <canvas id="chart-{{ loop.index }}"></canvas>
+    </div>
+  {% endfor %}
 </div>
 
 <script>
-    const charts = {{ charts | tojson }};
-
-    charts.forEach((chart, index) => {
-        const ctx = document.getElementById(`chart-${index + 1}`);
-
-        new Chart(ctx, {
-            type: chart.type,
-            data: {
-                labels: chart.labels,
-                datasets: chart.datasets
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: true
-                    }
-                }
-            }
-        });
-    });
+const charts = {{ charts | tojson }};
+charts.forEach((chart, index) => {
+  new Chart(document.getElementById(`chart-${index + 1}`), {
+    type: chart.type,
+    data: {
+      labels: chart.labels,
+      datasets: chart.datasets
+    },
+    options: { responsive: true }
+  });
+});
 </script>
-
-</body>
-</html>
+{% endblock %}
