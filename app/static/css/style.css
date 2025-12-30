@@ -56,15 +56,25 @@
   }
 
   /* 🔹 Modal */
-.modal-overlay {
-    display: none;
+  .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.4);
-    justify-content: center;
+    background: rgba(0, 0, 0, 0.45);
+    display: none;
     align-items: center;
-    z-index: 1000;
+    justify-content: center;
+    z-index: 1050;
   }
+  
+  .custom-modal {
+    background: #fff;
+    padding: 24px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 20px 40px rgba(0,0,0,.2);
+  }
+  
   
   .modal {
     background: white;
@@ -188,6 +198,55 @@
     padding: 8px 14px;
     border-radius: 6px;
     cursor: pointer;
+  }
+  
+  /* Sidebar */
+.sidebar {
+    background: #ffffff;
+    border-right: 1px solid #e5e7eb;
+    padding: 1rem;
+    min-height: 100vh;
+  }
+  
+  .sidebar .nav-link {
+    color: #374151;
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .sidebar .nav-link:hover {
+    background-color: #f3f4f6;
+    color: #111827;
+  }
+  
+  /* Layout */
+  .app-layout {
+    display: flex;
+  }
+  
+  .main-content {
+    background-color: #f9fafb;
+    min-height: 100vh;
+  }
+  
+  /* Modal overlay (mantém sua lógica) */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1050;
+  }
+  .text-clamp {
+    display: -webkit-box;
+    display: box;              /* fallback */
+    -webkit-box-orient: vertical;
+    box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;             /* padrão */
+    overflow: hidden;
   }
   
   
