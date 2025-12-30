@@ -1,19 +1,38 @@
-<div id="projectModal" class="modal">
-    <div class="modal-content">
-      <h3>Novo Projeto</h3>
+<div id="projectModal" class="modal-overlay">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content shadow">
   
-      <form method="POST" action="{{ url_for('create_project') }}">
-        <label>Título</label>
-        <input type="text" name="title" required>
-  
-        <label>Descrição</label>
-        <textarea name="description"></textarea>
-  
-        <div class="modal-actions">
-          <button type="submit">Criar</button>
-          <button type="button" onclick="closeModal()">Cancelar</button>
+        <div class="modal-header">
+          <h5 class="modal-title">Novo Projeto</h5>
+          <button type="button" class="btn-close" onclick="closeProjectModal()"></button>
         </div>
-      </form>
+  
+        <form method="POST" action="{{ url_for('create_project') }}">
+          <div class="modal-body">
+  
+            <div class="mb-3">
+              <label class="form-label">Título do projeto</label>
+              <input type="text" name="title" class="form-control" required>
+            </div>
+  
+            <div class="mb-3">
+              <label class="form-label">Descrição</label>
+              <textarea name="description" class="form-control" rows="3"></textarea>
+            </div>
+  
+          </div>
+  
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" onclick="closeProjectModal()">
+              Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary">
+              Criar Projeto
+            </button>
+          </div>
+        </form>
+  
+      </div>
     </div>
   </div>
   

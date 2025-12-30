@@ -5,61 +5,65 @@
     <title>{% block title %}Dashboard{% endblock %}</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    rel="stylesheet">
+      
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     {% block head %}{% endblock %}
 </head>
+
+<body>
 <!-- MODAL NOVO PROJETO -->
 <div id="projectModal" class="modal-overlay">
-  <div class="modal">
+  <div class="custom-modal">
     <h3>Novo Projeto</h3>
 
     <form method="POST" action="{{ url_for('create_project') }}">
-      <label>Título do projeto</label>
-      <input type="text" name="title" required>
+      <label class="form-label">Título do projeto</label>
+      <input type="text" name="title" class="form-control mb-2" required>
 
-      <label>Descrição</label>
-      <textarea name="description"></textarea>
+      <label class="form-label">Descrição</label>
+      <textarea name="description" class="form-control mb-3"></textarea>
 
-      <div class="modal-actions">
-        <button type="submit">Criar</button>
-        <button type="button" onclick="closeProjectModal()">Cancelar</button>
+      <div class="d-flex justify-content-end gap-2">
+        <button type="submit" class="btn btn-primary">Criar</button>
+        <button type="button" class="btn btn-outline-secondary" onclick="closeProjectModal()">Cancelar</button>
       </div>
     </form>
   </div>
 </div>
-<body>
 
 <div class="app-layout">
 
     <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <aside class="sidebar shadow-sm">
         <h3 class="logo">📊 DataApp</h3>
 
-        <nav>
-            <a href="{{ url_for('home') }}">🏠 Home</a>
-            <a href="#" onclick="openProjectModal()">➕ Novo Projeto</a>
+        <nav class="nav flex-column gap-1">
+            <a class="nav-link"  href="{{ url_for('home') }}">🏠 Home</a>
+            <a class="nav-link" href="#" onclick="event.preventDefault(); openProjectModal();">➕ Novo Projeto</a>
 
             <hr>
 
             <span class="menu-title">Dashboards</span>
             {% if projects %}
               {% for p in projects %}
-                <a href="/dashboard/{{ p.id }}">📁 {{ p.title }}</a>
+                <a class="nav-link text-truncate" href="/dashboard/{{ p.id }}">📁 {{ p.title }}</a>
               {% endfor %}
             {% endif %}
         </nav>
     </aside>
 
-    <!-- CONTEÚDO -->
-    <main class="main-content">
+    <main class="main-content container-fluid py-4">
         {% block content %}{% endblock %}
     </main>
 
 </div>
 
 {% block scripts %}{% endblock %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 <script>
