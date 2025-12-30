@@ -322,6 +322,33 @@ def delete_visual(chart_id):
     save_project(project)
     return redirect(url_for("dashboard", project_id=project_id))
 
+@app.route("/project/delete/<project_id>", methods=["POST"])
+def delete_project(project_id):
+    path = project_path(project_id)
+
+    if os.path.exists(path):
+        os.remove(path)
+
+    # limpa sessão se deletar o projeto atual
+    if session.get("project_id") == project_id:
+        session.clear()
+
+    return redirect(url_for("home"))
+
+@app.route("/project/delete/bulk", methods=["POST"])
+def delete_projects_bulk():
+    ids = request.form.get("project_ids", "")
+    project_ids = ids.split(",")
+
+    for project_id in project_ids:
+        path = project_path(project_id)
+        if os.path.exists(path):
+            os.remove(path)
+
+        if session.get("project_id") == project_id:
+            session.clear()
+
+    return redirect(url_for("home"))
 
 if __name__ == "__main__":
     app.run(debug=True)

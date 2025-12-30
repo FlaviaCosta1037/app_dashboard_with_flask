@@ -1,32 +1,113 @@
 {% extends "base.html" %}
-
 {% block title %}Home{% endblock %}
 
 {% block content %}
-  <h2>Bem-vindo 👋</h2>
+<h2>Bem-vindo 👋</h2>
 
-  <p>
-    Crie um novo projeto no menu lateral ou selecione um dashboard existente.
-  </p>
+<p>Crie um novo projeto no menu lateral ou selecione um dashboard existente.</p>
 
-  {% if projects %}
-    <div class="row mt-4">
-      {% for p in projects %}
-        <div class="col-md-4 mb-3">
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title">{{ p.title }}</h5>
-              <p class="card-text text-muted">{{ p.description }}</p>
+{% if projects %}
+  <!-- AÇÕES -->
+  <div class="mb-3">
+    <button
+      class="btn btn-danger btn-sm"
+      onclick="openDeleteProjectsModal()"
+      disabled
+      id="deleteProjectsBtn"
+    >
+      🗑️ Excluir selecionado(s)
+    </button>
+  </div>
 
-              <a href="/dashboard/{{ p.id }}" class="btn btn-outline-primary btn-sm">
-                Abrir dashboard
-              </a>
+  <div class="row mt-3">
+    {% for p in projects %}
+      <div class="col-md-4 mb-3">
+        <div class="card shadow-sm">
+          <div class="card-body">
+
+            <!-- CHECKBOX -->
+            <div class="form-check mb-2">
+              <input
+                class="form-check-input project-checkbox"
+                type="checkbox"
+                value="{{ p.id }}"
+                data-title="{{ p.title }}"
+                onchange="toggleDeleteButton()"
+              >
+              <label class="form-check-label text-muted">
+                Selecionar
+              </label>
             </div>
+
+            <h5 class="card-title">{{ p.title }}</h5>
+            <p class="card-text text-muted">{{ p.description }}</p>
+
+            <a href="{{ url_for('dashboard', project_id=p.id) }}"
+               class="btn btn-outline-primary btn-sm">
+              Abrir dashboard
+            </a>
+
           </div>
         </div>
-      {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+
+{% else %}
+  <p class="text-muted mt-4">Nenhum projeto criado ainda.</p>
+{% endif %}
+
+<!-- MODAL EXCLUIR PROJETOS -->
+<div class="modal-backdrop" id="deleteProjectsModal">
+  <div class="modal-box">
+    <h3>Excluir projeto(s)</h3>
+
+    <p>Os seguintes projetos serão excluídos:</p>
+    <ul id="projectsToDelete" class="text-muted"></ul>
+
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeDeleteProjectsModal()">
+        Cancelar
+      </button>
+
+      <form method="POST" action="{{ url_for('delete_projects_bulk') }}">
+        <input type="hidden" name="project_ids" id="projectIdsInput">
+        <button type="submit" class="btn-danger">
+          Excluir
+        </button>
+      </form>
     </div>
-  {% else %}
-    <p class="text-muted mt-4">Nenhum projeto criado ainda.</p>
-  {% endif %}
+  </div>
+</div>
+
+<script>
+function toggleDeleteButton() {
+  const checked = document.querySelectorAll(".project-checkbox:checked");
+  document.getElementById("deleteProjectsBtn").disabled = checked.length === 0;
+}
+
+function openDeleteProjectsModal() {
+  const checked = document.querySelectorAll(".project-checkbox:checked");
+  const list = document.getElementById("projectsToDelete");
+  const idsInput = document.getElementById("projectIdsInput");
+
+  list.innerHTML = "";
+  const ids = [];
+
+  checked.forEach(cb => {
+    const li = document.createElement("li");
+    li.textContent = cb.dataset.title;
+    list.appendChild(li);
+    ids.push(cb.value);
+  });
+
+  idsInput.value = ids.join(",");
+  document.getElementById("deleteProjectsModal").classList.add("active");
+}
+
+function closeDeleteProjectsModal() {
+  document.getElementById("deleteProjectsModal").classList.remove("active");
+}
+</script>
+
 {% endblock %}
