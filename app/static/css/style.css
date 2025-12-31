@@ -108,40 +108,98 @@
     gap: 8px;
   }
   
+  /* ===== GRID DO DASHBOARD ===== */
   .dashboard-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-    gap: 20px;
+    column-count: 2;      
+    column-gap: 16px;
+  }
+  @media (max-width: 1100px) {
+    .dashboard-grid {
+      column-count: 1;
+    }
   }
   
-  .chart-delete-btn {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: none;
+  /* ===== CARD DO GRÁFICO ===== */
+  .chart-wrapper {
+    background: #fff;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 16px; 
+    display: inline-block;
+    width: 100%;
+    break-inside: avoid; 
+  }
+  
+  
+  /* Header do gráfico */
+  .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  
+  /* Canvas base */
+  .chart-wrapper canvas {
+    width: 100% !important;
+  }
+  
+  /* ===== ALTURAS NATURAIS POR TIPO ===== */
+  .chart-bar canvas {
+    height: 260px !important;
+  }
+  
+  .chart-line canvas {
+    height: 240px !important;
+  }
+  
+  .chart-doughnut canvas,
+  .chart-pie canvas {
+    height: 340px !important;
+  }
+  
+  /* ===== BOTÃO DELETE ===== */
+  .delete-chart-btn {
+    background: transparent;
     border: none;
     cursor: pointer;
+    font-size: 16px;
+  }
+  
+  /* ===== MODAL DELETE ===== */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .modal-backdrop.active {
+    display: flex;
+  }
+  
+  .modal-box {
+    background: #fff;
+    padding: 24px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 380px;
+  }
+  
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
   }
   
   .empty-state {
     color: #777;
   }
-  
-/* grid */
-.charts-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
-    gap: 20px;
-  }
-  
-  .chart-card {
-    position: relative;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #e0e0e0;
-    background: #fff;
-  }
-  
+
   /* delete button */
   .delete-btn {
     position: absolute;
@@ -153,7 +211,15 @@
     font-size: 16px;
   }
   
-  /* modal */
+/* ===== BOTÃO DELETE ===== */
+.delete-chart-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  /* ===== MODAL DELETE ===== */
   .modal-backdrop {
     position: fixed;
     inset: 0;
